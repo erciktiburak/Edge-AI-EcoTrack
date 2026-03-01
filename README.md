@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Edge-AI Sustainability Platform
 
-## Getting Started
+AI-native, edge-first platform for tracking household carbon footprint and optimizing personal energy usage.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 + React 19 + React Compiler
+- Tailwind CSS v4
+- Bun-first package manager strategy
+- Turso (LibSQL) + Drizzle ORM
+- Clerk passkey-first authentication
+- Vercel AI SDK + LangChain.js
+- Tremor dashboard visualizations
+
+## Quick Start
+
+1. Copy environment template:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Fill required env vars in `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `OPENAI_API_KEY`
+- `ENERGY_WEBHOOK_SECRET`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Install dependencies:
 
-## Learn More
+```bash
+bun install
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run migrations:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+bun run db:generate
+bun run db:migrate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Start local dev server:
 
-## Deploy on Vercel
+```bash
+bun run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open `http://localhost:3000`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Core Routes
+
+- `/` - Product landing page
+- `/dashboard` - Authenticated carbon and energy dashboard
+- `/api/energy/webhook` - Edge webhook ingestion endpoint
+- `/api/energy/summary` - Authenticated energy summary endpoint
+- `/api/ai/carbon-analysis` - AI recommendation generator
+
+## Webhook Payload
+
+`POST /api/energy/webhook`
+
+Header:
+
+- `x-energy-signature: <ENERGY_WEBHOOK_SECRET>`
+
+Body:
+
+```json
+{
+  "eventId": "evt_001",
+  "clerkUserId": "user_2abc",
+  "source": "smart-meter",
+  "kwh": 17.8,
+  "carbonKg": 7.44,
+  "capturedAt": "2026-03-02T08:30:00.000Z"
+}
+```
+
+## Roadmap
+
+See `docs/github-roadmap.md` for commit-by-commit implementation milestones.
+
+## Performance Validation
+
+- Run local benchmark suite (while app is running): `npm run bench:edge`
+- Latest benchmark notes: `docs/performance-benchmark.md`
