@@ -5,6 +5,7 @@ import {
   real,
   sqliteTable,
   text,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
@@ -77,9 +78,34 @@ export const webhookEvents = sqliteTable(
   }),
 );
 
+export const carbonMetrics = sqliteTable(
+  "carbon_metrics",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    day: text("day").notNull(),
+    totalKwh: real("total_kwh").notNull(),
+    totalCarbonKg: real("total_carbon_kg").notNull(),
+    gridIntensity: real("grid_intensity").notNull(),
+    createdAt: integer("created_at", { mode: "number" })
+      .notNull()
+      .default(sql`(unixepoch() * 1000)`),
+  },
+  (table) => ({
+    userIdx: index("metrics_user_idx").on(table.userId),
+    dayIdx: index("metrics_day_idx").on(table.day),
+    userDayUnique: uniqueIndex("metrics_user_day_unique").on(table.userId, table.day),
+  }),
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   energyReadings: many(energyReadings),
   carbonAnalyses: many(carbonAnalyses),
+  carbonMetrics: many(carbonMetrics),
 }));
 
 export const energyReadingsRelations = relations(energyReadings, ({ one }) => ({
@@ -96,5 +122,13 @@ export const carbonAnalysesRelations = relations(carbonAnalyses, ({ one }) => ({
   }),
 }));
 
+export const carbonMetricsRelations = relations(carbonMetrics, ({ one }) => ({
+  user: one(users, {
+    fields: [carbonMetrics.userId],
+    references: [users.id],
+  }),
+}));
+
 export type EnergyReading = typeof energyReadings.$inferSelect;
 export type CarbonAnalysis = typeof carbonAnalyses.$inferSelect;
+export type CarbonMetric = typeof carbonMetrics.$inferSelect;
