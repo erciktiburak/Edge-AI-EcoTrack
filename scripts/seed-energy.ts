@@ -1,3 +1,4 @@
+import "./load-env";
 import { eq } from "drizzle-orm";
 
 import { assertDatabaseConnection, db } from "../src/db/client";
