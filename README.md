@@ -40,6 +40,7 @@ bun install
 ```bash
 bun run db:generate
 bun run db:migrate
+bun run db:seed
 ```
 
 5. Start local dev server:
@@ -49,6 +50,12 @@ bun run dev
 ```
 
 Open `http://localhost:3000`.
+
+Shortcut for full DB bootstrap (generate + migrate + seed):
+
+```bash
+npm run db:init
+```
 
 ## Core Routes
 

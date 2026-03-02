@@ -10,7 +10,9 @@
     "bench:edge": "node scripts/benchmark-edge.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx scripts/seed-energy.ts",
+    "db:init": "npm run db:generate && npm run db:migrate && npm run db:seed"
   },
   "packageManager": "bun@1.5.0",
   "dependencies": {

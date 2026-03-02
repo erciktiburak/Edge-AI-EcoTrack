@@ -19,3 +19,13 @@ export const env = {
 
 export const hasTurso =
   Boolean(env.server.TURSO_DATABASE_URL) && Boolean(env.server.TURSO_AUTH_TOKEN);
+
+export function assertTursoEnv(): void {
+  if (hasTurso) {
+    return;
+  }
+
+  throw new Error(
+    "Missing Turso configuration. Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.",
+  );
+}
