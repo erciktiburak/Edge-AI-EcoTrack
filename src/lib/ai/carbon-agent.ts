@@ -1,7 +1,5 @@
 import { generateText } from "ai";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { RunnableSequence } from "@langchain/core/runnables";
 import { openai } from "@ai-sdk/openai";
 
 import type { EnergySummary } from "@/lib/energy";
@@ -29,17 +27,13 @@ Recommendation: <single paragraph>
 SavingsKg: <number>
 `);
 
-const parser = new StringOutputParser();
-
-const planningChain = RunnableSequence.from([analysisPrompt, parser]);
-
 export async function analyzeCarbonProfile(
   summary: EnergySummary,
 ): Promise<CarbonAnalysisResult> {
-  const prompt = await planningChain.invoke({
+  const prompt = await analysisPrompt.format({
     totalKwh: summary.totalKwh.toFixed(2),
     totalCarbonKg: summary.totalCarbonKg.toFixed(2),
-    trend: JSON.stringify(summary.trend),
+    trend: JSON.stringify(summary.trend ?? []),
   });
 
   const { text } = await generateText({

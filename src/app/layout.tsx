@@ -30,7 +30,10 @@ export default function RootLayout({
   if (!publishableKey) {
     return (
       <html lang="en">
-        <body className={`${displaySans.variable} ${codeMono.variable} antialiased`}>
+        <body
+          suppressHydrationWarning
+          className={`${displaySans.variable} ${codeMono.variable} antialiased`}
+        >
           {children}
         </body>
       </html>
@@ -40,7 +43,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider publishableKey={publishableKey}>
-        <body className={`${displaySans.variable} ${codeMono.variable} antialiased`}>
+        <body
+          suppressHydrationWarning
+          className={`${displaySans.variable} ${codeMono.variable} antialiased`}
+        >
           {children}
         </body>
       </ClerkProvider>
